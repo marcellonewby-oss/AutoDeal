@@ -1,10 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { useEffect } from "react";
 import { ShieldCheck, Sparkles } from "lucide-react";
 
 const features = [
@@ -21,42 +17,15 @@ const features = [
 ];
 
 export function Consultancy() {
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const form = e.currentTarget;
-    const data = {
-      name: (form.elements.namedItem("name") as HTMLInputElement).value,
-      role: (form.elements.namedItem("role") as HTMLInputElement).value,
-      email: (form.elements.namedItem("email") as HTMLInputElement).value,
-      brief: (form.elements.namedItem("brief") as HTMLTextAreaElement).value,
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://link.msgsndr.com/js/form_embed.js";
+    script.type = "text/javascript";
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
     };
-
-    try {
-      const res = await fetch("/api/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.error || "Submission failed.");
-      }
-
-      setSubmitted(true);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
+  }, []);
 
   return (
     <section
@@ -97,66 +66,22 @@ export function Consultancy() {
           </div>
         </div>
 
-        {/* Right — form */}
-        <div className="bg-surface-container-high p-12 rounded-xl shadow-2xl border border-primary/10">
-          {submitted ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center gap-6">
-              <span className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <ShieldCheck className="w-8 h-8 text-primary" />
-              </span>
-              <h3 className="font-headline text-3xl">Application Received.</h3>
-              <p className="text-on-surface-variant font-body leading-relaxed">
-                Our team will review your brief and reach out within 48
-                hours to discuss your pipeline strategy.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" placeholder="Julian Vane" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role">Your Role</Label>
-                  <Input id="role" placeholder="Founder / CEO" required />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Business Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@yourcompany.com"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="brief">Tell Us About Your Business</Label>
-                <Textarea
-                  id="brief"
-                  placeholder="What do you sell, who do you sell to, and what's your current outbound situation?"
-                  rows={4}
-                  required
-                />
-              </div>
-
-              {error && (
-                <p className="text-sm text-red-400 text-center">{error}</p>
-              )}
-
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full text-base"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Apply for AutoLead"}
-              </Button>
-            </form>
-          )}
+        {/* Right — GHL form embed */}
+        <div className="bg-surface-container-high rounded-xl shadow-2xl border border-primary/10 overflow-hidden">
+          <iframe
+            src="https://api.leadconnectorhq.com/widget/form/twk03hHUFWan05RiIUEy"
+            style={{ width: "100%", height: "884px", border: "none" }}
+            id="inline-twk03hHUFWan05RiIUEy"
+            data-layout='{"id":"INLINE"}'
+            data-trigger-type="alwaysShow"
+            data-trigger-value=""
+            data-activation-type="alwaysActivated"
+            data-activation-value=""
+            data-deactivation-type="neverDeactivate"
+            data-deactivation-value=""
+            data-form-id="twk03hHUFWan05RiIUEy"
+            title="Apply for AutoLead"
+          />
         </div>
       </div>
     </section>
